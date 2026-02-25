@@ -5,17 +5,23 @@
 #include "main.h"
 #include "adc.h"
 #include "data.h"
+#include "mux.h"
+#include "types.h"
 
 namespace Device
 {
 	Control::status_type Control::_status;
 	unsigned char Control::_math;
 
-	void Control::Start(unsigned char math)
+	void Control::Set(unsigned char math)
+	{
+		_math = math;
+	}
+
+	void Control::Start()
 	{
 		if (_status == STATUS_WAIT)
 			_status = STATUS_START;
-		_math = math;
 	}
 
 	void Control::Init()
@@ -25,35 +31,42 @@ namespace Device
 
 	void Control::Idle()
 	{
-		static float amp = 0; // Hardware::MUX::Max;
+		static float amp = Hardware::MUX::Max;
 		switch (_status)
 		{
 		case STATUS_START:
-			if (!Device::Options::GetWaveAmp())
-				Software::Data::SetWaveAmp(Device::Options::GetWaveAmp());
+			if (Device::Options::GetWaveAmp())
+				Software::Data::SetWaveAmp(Device::Options::GetWaveAmp() - 1);
 			else
 				Software::Data::SetWaveAmp(amp);
-			// Hardware::MUX::Set(&amp);
+			Hardware::MUX::Set(0/*Software::Data::GetWaveAmp()*/);
 			Software::Data::SetWaveFilter(Device::Options::GetWaveFilter());
 			Software::Data::SetWaveStep(Device::Options::GetWaveStep());
 			Software::Data::SetWaveLength(Device::Options::GetWaveLength());
-			Hardware::ADC::Start(Software::Data::GetWaveBuffer(), Software::Data::GetWaveLength());
-Hardware::Debug::TP(1)			;
-Hardware::Debug::TP(0)			;
+			Hardware::ADC::Start(Software::Data::GetWaveBuffer(), 1024+256/*Software::Data::GetWaveLength()*/);
+			Hardware::Debug::TP(1);
+			Hardware::Debug::TP(0);
 			_status = STATUS_MEASURE;
 			break;
 		case STATUS_MEASURE:
 			if (Hardware::ADC::Ready())
 			{
 				Hardware::ADC::Stop();
-				for(int i = 0; i < Software::Data::GetSpectrumChannels(); i++)//!!!
-				{	
-					int value = Software::Data::GetWave()[i];//(i * 60) << 4; //Software::Data::GetWave()[i];
-				//	value = ((value & 0xFF00FF00) >> 8) | ((value & 0x00FF00FF) << 8);
-					Software::Data::GetSpectrum()[i] = (unsigned short)((int)value >> (Hardware::ADC::Resolution - 16));
-				}	
-					
-				/*int max = 1 << Hardware::ADC::Resolution;
+
+				unsigned int mux = Software::Data::GetWaveAmp();
+
+				mux = (mux <= 4) ? (4-mux) : 0;
+
+				for (int i = 0; i < Software::Data::GetSpectrumChannels(); i++) //!!!
+				{
+					#ifdef ADC16BIT
+						Software::Data::GetSpectrum()[i] = (((u32)(Software::Data::GetWave()[i+256]))&0xFFFF)-0x8000; 
+					#else
+						Software::Data::GetSpectrum()[i] = clip(Software::Data::GetWave()[i]/16, 32767); //(unsigned short)((int)Software::Data::GetWave()[i] >> (Hardware::ADC::Resolution - 16));
+					#endif
+				};
+
+				int max = 1 << Hardware::ADC::Resolution;
 				int min = (-1) << Hardware::ADC::Resolution;
 				int mid = 0;
 				int norm = 0;
@@ -77,35 +90,35 @@ Hardware::Debug::TP(0)			;
 					amp++;
 				if (max < (((Hardware::ADC::Max - Hardware::ADC::Min) * 1) / 4))
 					amp--;
-				//if (amp > Hardware::MUX::Max)
-				//	amp = Hardware::MUX::Max;
-				//if (amp <= Hardware::MUX::Min)
-				//	amp = Hardware::MUX::Min;
+				if (amp > Hardware::MUX::Max)
+					amp = Hardware::MUX::Max;
+				if (amp <= Hardware::MUX::Min)
+					amp = Hardware::MUX::Min;
 				Software::Data::SetMeasureAmplitudeMax(max >> (Hardware::ADC::Resolution - 16));
-				Software::Data::SetMeasureAmplitudeMid(mid >> (Hardware::ADC::Resolution - 16));*/
+				Software::Data::SetMeasureAmplitudeMid(mid >> (Hardware::ADC::Resolution - 16));
 				_status = STATUS_MATH;
 			}
 			break;
 		case STATUS_MATH:
-		/*	unsigned int channels;
-			channels = Software::Options::GetSpectrumChannels();
-			float partition;
-			float overlapp;
-			switch (_math)
-			{
-			case Software::Spectrum::MATH_AVERAGE:
-				overlapp = Software::Options::GetSpectrumOverlapp();
-				break;
-			case Software::Spectrum::MATH_MAXIMUM: // принудительно убираем перекрытие окон
-			default:
-				overlapp = 0;
-				break;
-			}
-			channels = Software::Options::GetSpectrumChannels();
-			Software::Spectrum::Calculate((Software::Spectrum::math_type)_math, Software::Data::GetNoise(), Software::Data::GetSpectrumLength(), Software::Data::GetSpectrum(), &channels, &partition, overlapp);
-			Software::Data::SetSpectrumChannels(channels);
-			Software::Data::SetSpectrumPartition(partition);
-			Software::Data::SetSpectrumOverlapp(overlapp);*/
+			/*	unsigned int channels;
+				channels = Software::Options::GetSpectrumChannels();
+				float partition;
+				float overlapp;
+				switch (_math)
+				{
+				case Software::Spectrum::MATH_AVERAGE:
+					overlapp = Software::Options::GetSpectrumOverlapp();
+					break;
+				case Software::Spectrum::MATH_MAXIMUM: // принудительно убираем перекрытие окон
+				default:
+					overlapp = 0;
+					break;
+				}
+				channels = Software::Options::GetSpectrumChannels();
+				Software::Spectrum::Calculate((Software::Spectrum::math_type)_math, Software::Data::GetNoise(), Software::Data::GetSpectrumLength(), Software::Data::GetSpectrum(), &channels, &partition, overlapp);
+				Software::Data::SetSpectrumChannels(channels);
+				Software::Data::SetSpectrumPartition(partition);
+				Software::Data::SetSpectrumOverlapp(overlapp);*/
 			_status = STATUS_READY;
 			break;
 		case STATUS_READY:
@@ -115,7 +128,6 @@ Hardware::Debug::TP(0)			;
 		default:
 			break;
 		}
-		
 	}
 
 } // namespace Device

@@ -12,7 +12,7 @@ namespace Hardware
 		SRU(DPI_PB08_O, UART0_RX_I);
 		SRU(LOW, DPI_PB06_I); // DE
 		SRU(HIGH, DPI_PBEN06_I);
-		
+
 		*pUART0TXCTL = 0;
 		*pUART0RXCTL = 0;
 		*pUART0LCR = UARTDLAB;

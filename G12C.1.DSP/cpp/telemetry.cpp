@@ -54,6 +54,7 @@ namespace Device
 			((transceive_measure_type *)transceive_data)->measure.temperature = Device::Control::GetTemperature();
 			for (unsigned int i = 0; i < ((transceive_measure_type *)transceive_data)->options.channels; i++)
 				((transceive_measure_type *)transceive_data)->spectrum[i] = Software::Data::GetSpectrum()[i];
+			Device::Control::Set((((receive_type *)receive_data)->request) & 0x000F);
 			result = sizeof(transceive_measure_type) + ((transceive_measure_type *)transceive_data)->options.channels;
 			break;
 		case 0x0680:
@@ -185,7 +186,7 @@ namespace Device
 				Hardware::RS485::StopTX();
 				transceive_count = 0;
 				transceive_size = 0;
-				Device::Control::Start(0); //!!!
+				Device::Control::Start();
 				state = 0;
 			}
 			break;

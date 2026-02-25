@@ -32,7 +32,7 @@ namespace Software
 				unsigned short length;
 				unsigned short filter;
 			} options;
-			int wave[Software::Calculation::Length]; // без упаковки, 20 бит
+			int wave[Software::Calculation::Length+16]; // без упаковки, 20 бит
 		} wave_data_type;
 		typedef struct
 		{

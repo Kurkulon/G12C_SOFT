@@ -4,8 +4,8 @@
 
 namespace Software
 {
-	complex_float Calculation::_data[];
 	complex_float Calculation::_coef[];
+	complex_float Calculation::_data[Software::Calculation::Length];
 	/*const float Calculation::_partition[1024] =
 		{
 #include "partition.table"
@@ -13,7 +13,7 @@ namespace Software
 
 	bool Calculation::FFT(complex_float *data, unsigned int *size, bool inverse)
 	{
-/*		if ((*size > (1u << 13)) || (*size < (1u << 1)))
+		if ((*size > (1u << 13)) || (*size < (1u << 1)))
 			return false;
 		volatile unsigned int size_pow = 0;
 		while ((1u << (size_pow + 1)) <= *size)
@@ -80,7 +80,7 @@ namespace Software
 		{
 			data[i].re *= rw;
 			data[i].im *= rw;
-		}*/
+		}
 		return true;
 	}
 
@@ -147,17 +147,17 @@ namespace Software
 
 	bool Calculation::Calculate(math_type math, unsigned short *in, unsigned int in_size, unsigned short *out, unsigned int *out_size, float *partition, float overlapping)
 	{
-	/*	if (in_size > sizeof(_data) / sizeof(complex_float))
+		if (in_size > sizeof(_data) / sizeof(complex_float))
 			return false;
 		for (int i = 0; i < in_size; i++)
 		{
-			_data[i].re = (float)in[i] - Hardware::ADCS7476::Mid;
+			_data[i].re = (float)in[i];
 			_data[i].im = 0;
 		}
 		if (!FFT(_data, &in_size, false))
 			return false;
-		if (!Partition(math, _data, in_size / 2, out, out_size, partition, overlapping))
-			return false;*/
+		//if (!Partition(math, _data, in_size / 2, out, out_size, partition, overlapping))
+		//	return false;
 		return true;
 	}
 

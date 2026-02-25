@@ -5,29 +5,33 @@
 
 namespace Hardware
 {
-    void MUX::Init() // 74HCT595
+    void MUX::Init() 
     {
-        SRU(SPORT2_CLK_O, DAI_PB06_I);
-        SRU(HIGH, DAI_PBEN06_I);
-        SRU(SPORT2_CLK_O, SPORT2_CLK_I);
+        
+    	SRU(SPI_CLK_O, DPI_PB09_I);
+		SRU(SPI_CLK_PBEN_O, DPI_PBEN09_I);
+        SRU(SPI_CLK_O, SPI_CLK_I);
 
-        SRU(SPORT2_FS_O, DAI_PB05_I);
-        SRU(HIGH, DAI_PBEN05_I);
-        SRU(DAI_PB05_O, SPORT2_FS_I);
+       	SRU(SPI_FLG0_O, DPI_PB10_I);
+		SRU(SPI_FLG0_PBEN_O, DPI_PBEN10_I);
+            
+        SRU(SPI_MOSI_O, DPI_PB11_I);
+		SRU(SPI_MOSI_PBEN_O, DPI_PBEN11_I);
+        SRU(SPI_MOSI_O, SPI_MOSI_I);
 
-        SRU(SPORT2_DA_O, DAI_PB02_I);
-        SRU(SPORT2_DA_PBEN_O, DAI_PBEN02_I);
-        SRU(DAI_PB02_O, SPORT2_DA_I);
+        SRU(SPI_MISO_O, DPI_PB12_I);
+		SRU(SPI_MISO_PBEN_O, DPI_PBEN12_I);
+        SRU(SPI_MISO_O, SPI_MISO_I);
 
-        *pSPCTL2 = 0;
-        *pDIV2 = (((Clk / Frequency) - 1) << 16) | ((PCLK / (4 * Clk) - 1) << 1);
-		*pSPCTL2 = SLEN8 | FSR | LFS | SPTRAN | LAFS | CKRE | ICLK | IFS; 
-        *pSPCTL2 |= SPEN_A; 
+        *pSPIFLG = DS0EN | SPIFLG0;
+        *pSPICTL = WL8 | MSBF | SPIMS | TIMOD1 | CLKPL;  
+        *pSPIBAUD = ((PCLK / (4 * Clock)) << 1);
+		*pSPICTL |= SPIEN;
     }
 
     void MUX::Set(unsigned char data)
     {      
-        *pTXSP2A = data;
+        *pTXSPI = data;
     }
 
 } // namespace Hardware

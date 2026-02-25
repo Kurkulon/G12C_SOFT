@@ -23,7 +23,8 @@ namespace Device
 		static unsigned char _math;
 
 	public:
-		static void Start(unsigned char math);
+		static void Set(unsigned char math);
+		static void Start();
 		static void Init();
 		static void Idle();
 		static unsigned short GetTemperature() { return 0; } // а его в этой плате нет

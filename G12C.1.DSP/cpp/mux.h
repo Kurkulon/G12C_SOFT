@@ -10,12 +10,14 @@
 
 namespace Hardware
 {
-	class MUX // NXP74HC595
+	class MUX // ADG739
 	{
 	private:
 	public:
 		static const unsigned int Frequency = 1000000;
-		static const unsigned int Clk = 10000000;
+		static const unsigned int Clock = 10000000;
+		static const unsigned char Min = 0;
+		static const unsigned char Max = 0x0F;
 		static void Init();
 		static void inline Idle() {};
 		static void Set(unsigned char data);

@@ -2,6 +2,7 @@
 #include "options.h"
 #include "twi.h"
 #include "debug.h"
+#include "mux.h"
 #include "calculation.h"
 
 
@@ -24,9 +25,8 @@ namespace Device
  
 	unsigned short Options::GetWaveAmp()
 	{
-		if (_options->wave.amp > 16) // !!! Hardware::MUX::Max
-			_options->wave.amp = 16;
-		
+		if (_options->wave.amp > Hardware::MUX::Max + 1)
+			_options->wave.amp = Hardware::MUX::Max + 1;
 		return _options->wave.amp;
 	}
 

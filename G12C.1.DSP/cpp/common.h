@@ -12,9 +12,9 @@
 #include <signal.h>
 #include <filter.h>
 #include <sru.h>
-#include "21488.h"
-#include "def21488.h"
-#include "cdef21488.h"
+#include <21488.h>
+#include <def21488.h>
+#include <cdef21488.h>
 
 #define CLKIN 25000000
 #define CCLK 400000000
