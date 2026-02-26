@@ -63,7 +63,7 @@ namespace Hardware
 	{
 		#ifdef ADC16BIT
 			*pSPCTL0 = 0;
-			*pDIV0 = (((Clock / Frequency) - 1) << 16) | ((PCLK / (4 * Clock) - 1) << 1);
+			*pDIV0 = (((ClockDiv) - 1) << 16) | ((PCLK / (4 * Clock) - 1) << 1);
 			*pSPCTL0 = SLEN16 | FSR | IFS | LFS | LAFS | CKRE | ICLK | IFS | DTYPE1;
 			*pIMSP0A = 1;
 			*pIISP0A = (unsigned int)data;
@@ -71,7 +71,7 @@ namespace Hardware
 			*pSPCTL0 |= SPEN_A | SDEN_A;
 		#else
 			*pSPCTL0 = 0;
-			*pDIV0 = (((Clock / Frequency) - 1) << 16) | ((PCLK / (4 * Clock) - 1) << 1);
+			*pDIV0 = (((ClockDiv) - 1) << 16) | ((PCLK / (4 * Clock) - 1) << 1);
 			*pSPCTL0 = SLEN20 | FSR | IFS | LFS | LAFS | CKRE | ICLK | IFS | DTYPE1;
 			*pIMSP0A = 1;
 			*pIISP0A = (unsigned int)data;

@@ -8,6 +8,8 @@
 #include "mux.h"
 #include "types.h"
 
+#include <filter.h>
+
 namespace Device
 {
 	Control::status_type Control::_status;
@@ -43,7 +45,7 @@ namespace Device
 			Software::Data::SetWaveFilter(Device::Options::GetWaveFilter());
 			Software::Data::SetWaveStep(Device::Options::GetWaveStep());
 			Software::Data::SetWaveLength(Device::Options::GetWaveLength());
-			Hardware::ADC::Start(Software::Data::GetWaveBuffer(), 1024+256/*Software::Data::GetWaveLength()*/);
+			Hardware::ADC::Start(Software::Data::GetWaveBuffer(), 2048+1024/*Software::Data::GetWaveLength()*/);
 			Hardware::Debug::TP(1);
 			Hardware::Debug::TP(0);
 			_status = STATUS_MEASURE;
@@ -57,13 +59,42 @@ namespace Device
 
 				mux = (mux <= 4) ? (4-mux) : 0;
 
-				for (int i = 0; i < Software::Data::GetSpectrumChannels(); i++) //!!!
+				int *src = Software::Data::GetWave()+1000;
+				u16 *dst = Software::Data::GetSpectrum();
+				float *fdst = (float*)src;
+				float *fftinp = fdst;
+
+				for (int i = 0; i < 2048; i++) //!!!
 				{
 					#ifdef ADC16BIT
-						Software::Data::GetSpectrum()[i] = (((u32)(Software::Data::GetWave()[i+256]))&0xFFFF)-0x8000; 
+						//*(dst++) = ((src[0]&0xFFFF)+(src[1]&0xFFFF))/2-0x8000; src++;
+						//*(dst++) = (*(src++)&0xFFFF)-0x8000;
+						*(fdst++) = (*(src++)&0xFFFF)-0x8000;
 					#else
-						Software::Data::GetSpectrum()[i] = clip(Software::Data::GetWave()[i]/16, 32767); //(unsigned short)((int)Software::Data::GetWave()[i] >> (Hardware::ADC::Resolution - 16));
+						*(dst++) = clip(*(src++)/8, 32767); //(unsigned short)((int)Software::Data::GetWave()[i] >> (Hardware::ADC::Resolution - 16));
 					#endif
+				};
+
+				if (rfft2048(fftinp, Software::Calculation::_data) != 0)
+				{
+					complex_float *src = Software::Calculation::_data;
+
+					u16 *dst = Software::Data::GetSpectrum();
+
+					for (int i = 0; i < Software::Data::GetSpectrumChannels(); i++) //!!!
+					{
+						int t = cabsf(*(src++))/2048;
+						*(dst++) = clip(t, 32767);
+					};
+				}
+				else
+				{
+					u16 *dst = Software::Data::GetSpectrum();
+					
+					for (int i = 0; i < Software::Data::GetSpectrumChannels(); i++) //!!!
+					{
+						*(dst++) = clip(*(fftinp++), 32767);
+					};
 				};
 
 				int max = 1 << Hardware::ADC::Resolution;

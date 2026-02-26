@@ -25,10 +25,10 @@ namespace Software
 		static const unsigned int MinChannels = 2;
 		static const unsigned int MaxOverlapp = 1000;
 		static const unsigned int MinOverlapp = 0;
+		static complex_float _data[Software::Calculation::Length];
 	private:
 		static bool FFT(complex_float *data, unsigned int *size, bool inverse);
 		static bool Partition(math_type math, complex_float *data, unsigned int size, unsigned short *out, unsigned int *out_size, float *partition, float overlapping);
-		static complex_float _data[Software::Calculation::Length];
 		static complex_float _coef[16];
 		static const float _partition[MaxChannels];
 	public:
