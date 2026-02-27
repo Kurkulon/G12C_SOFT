@@ -19,7 +19,7 @@ namespace Software
 			MATH_MAXIMUM,
 			MATH_UNKNOWN,
 		};
-		static const unsigned int Step = (1000000 / Hardware::ADC::Frequency);
+		static const unsigned int Step = (1000000000 / Hardware::ADC::Frequency);
 		static const unsigned int Length = (1 << 14); 
 		static const unsigned int MaxChannels = (1 << 11);
 		static const unsigned int MinChannels = 2;

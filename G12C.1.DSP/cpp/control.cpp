@@ -6,7 +6,7 @@
 #include "adc.h"
 #include "data.h"
 #include "mux.h"
-#include "types.h"
+#include "core.h"
 
 #include <filter.h>
 
@@ -64,38 +64,50 @@ namespace Device
 				float *fdst = (float*)src;
 				float *fftinp = fdst;
 
-				for (int i = 0; i < 2048; i++) //!!!
+				Hardware::Debug::TP(1);
+
+				for (int i = 0; i < 1024; i++) //!!!
 				{
 					#ifdef ADC16BIT
 						//*(dst++) = ((src[0]&0xFFFF)+(src[1]&0xFFFF))/2-0x8000; src++;
-						//*(dst++) = (*(src++)&0xFFFF)-0x8000;
-						*(fdst++) = (*(src++)&0xFFFF)-0x8000;
+						*(dst++) = (*(src++)&0xFFFF)-0x8000;
+						//*(fdst++) = (*(src++)&0xFFFF)-0x8000;
 					#else
 						*(dst++) = clip(*(src++)/8, 32767); //(unsigned short)((int)Software::Data::GetWave()[i] >> (Hardware::ADC::Resolution - 16));
 					#endif
 				};
 
-				if (rfft2048(fftinp, Software::Calculation::_data) != 0)
-				{
-					complex_float *src = Software::Calculation::_data;
+				Hardware::Debug::TP(0);
 
-					u16 *dst = Software::Data::GetSpectrum();
+				Hardware::Debug::TP(1);
 
-					for (int i = 0; i < Software::Data::GetSpectrumChannels(); i++) //!!!
-					{
-						int t = cabsf(*(src++))/2048;
-						*(dst++) = clip(t, 32767);
-					};
-				}
-				else
-				{
-					u16 *dst = Software::Data::GetSpectrum();
-					
-					for (int i = 0; i < Software::Data::GetSpectrumChannels(); i++) //!!!
-					{
-						*(dst++) = clip(*(fftinp++), 32767);
-					};
-				};
+				//if (rfft2048(fftinp, Software::Calculation::_data) != 0)
+				//{
+				//	Hardware::Debug::TP(0);
+
+				//	complex_float *src = Software::Calculation::_data;
+
+				//	u16 *dst = Software::Data::GetSpectrum();
+
+				//	Hardware::Debug::TP(1);
+
+				//	for (int i = 0; i < Software::Data::GetSpectrumChannels(); i++) //!!!
+				//	{
+				//		int t = cabsf(*(src++))/*/2048*/;
+				//		*(dst++) = clip(t, 32767);
+				//	};
+				//}
+				//else
+				//{
+				//	u16 *dst = Software::Data::GetSpectrum();
+				//	
+				//	for (int i = 0; i < Software::Data::GetSpectrumChannels(); i++) //!!!
+				//	{
+				//		*(dst++) = clip(*(fftinp++), 32767);
+				//	};
+				//};
+
+				Hardware::Debug::TP(0);
 
 				int max = 1 << Hardware::ADC::Resolution;
 				int min = (-1) << Hardware::ADC::Resolution;

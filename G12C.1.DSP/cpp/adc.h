@@ -16,13 +16,14 @@ namespace Hardware
 	public:
 
 #ifdef ADC16BIT
-		static const int Max = 0xFFFF;
-		static const int Mid = 0x8000;
-		static const int Min = 0;
-		static const int Resolution = 16;
-		static const unsigned int Clock = 5000000; //Frequency * 40; // 20 bit + CNV
-		static const unsigned int ClockDiv = 24; //Frequency * 40; // 20 bit + CNV
-		static const unsigned int Frequency = Clock/ClockDiv;//312500;
+		static const int			Max = 0xFFFF;
+		static const int			Mid = 0x8000;
+		static const int			Min = 0;
+		static const int			Resolution = 16;
+		static const unsigned int	Clock = 5000000; //Frequency * 40; // 20 bit + CNV
+		static const unsigned int	ClockDiv = 20; //Frequency * 40; // 20 bit + CNV
+		static const unsigned int	Freq = Clock/ClockDiv; 
+		static const float			Frequency = 1.0 * Clock/ClockDiv; 
 #else
 		static const int Max = 0xFFFFF;
 		static const int Mid = 0x80000;

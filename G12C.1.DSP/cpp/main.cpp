@@ -10,7 +10,9 @@
 #include "control.h"
 #include "calculation.h"
 #include "data.h"
-		
+
+#include "time.h"
+
 void main()
 {
 	Hardware::Main::Init();
