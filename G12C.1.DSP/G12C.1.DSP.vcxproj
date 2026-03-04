@@ -46,7 +46,7 @@
     <NMakeReBuildCommandLine>wmake -h -a version=Debug targetcpu=21489</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>%40del /Q .\Debug\*.*</NMakeCleanCommandLine>
     <NMakeOutput>$(OutDir)G12C.1.DSP.dxe</NMakeOutput>
-    <NMakePreprocessorDefinitions>__DEBUG;CPU_21489;_ADI_COMPILER;</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>_DEBUG;CPU_21489;_ADI_COMPILER;__ADSP21000__;__ADSP21489__;__ADSP2148x__;__ADSP214xx__;</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath>..\..\G_LIBS\cpp;$(ADI_CCES)\Sharc\include;</NMakeIncludeSearchPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='21489_Release|Win32'">
@@ -56,7 +56,7 @@
     <NMakeReBuildCommandLine>wmake -h -a version=Release targetcpu=21489</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>%40del /Q .\Release\*.*</NMakeCleanCommandLine>
     <NMakeOutput>$(OutDir)G12C.1.DSP.dxe</NMakeOutput>
-    <NMakePreprocessorDefinitions>CPU_21489;_ADI_COMPILER;</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>CPU_21489;_ADI_COMPILER;__ADSP21000__;__ADSP21489__;__ADSP2148x__;__ADSP214xx__;</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath>..\..\G_LIBS\cpp;$(ADI_CCES)\Sharc\include;</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemDefinitionGroup>

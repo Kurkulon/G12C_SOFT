@@ -41,7 +41,7 @@ namespace Device
 				Software::Data::SetWaveAmp(Device::Options::GetWaveAmp() - 1);
 			else
 				Software::Data::SetWaveAmp(amp);
-			Hardware::MUX::Set(0/*Software::Data::GetWaveAmp()*/);
+			Hardware::MUX::Set(Software::Data::GetWaveAmp());
 			Software::Data::SetWaveFilter(Device::Options::GetWaveFilter());
 			Software::Data::SetWaveStep(Device::Options::GetWaveStep());
 			Software::Data::SetWaveLength(Device::Options::GetWaveLength());
